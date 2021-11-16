@@ -1,14 +1,21 @@
 package jp.co.axa.apidemo.controllers;
 
+import java.util.List;
 import javax.validation.Valid;
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.services.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -16,16 +23,17 @@ public class EmployeeController {
 
   Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
-  @Autowired
-  private EmployeeService employeeService;
+  @Autowired private EmployeeService employeeService;
 
   public void setEmployeeService(EmployeeService employeeService) {
     this.employeeService = employeeService;
   }
 
   @GetMapping("/employees")
-  public List<Employee> getEmployees() {
-    return employeeService.retrieveEmployees();
+  public List<Employee> getEmployees(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "10") int size) {
+    return employeeService.getEmployees(page, size);
   }
 
   @GetMapping("/employees/{employeeId}")
@@ -48,14 +56,12 @@ public class EmployeeController {
   }
 
   @PutMapping("/employees/{employeeId}")
-  public void updateEmployee(@RequestBody Employee employee,
-      @PathVariable(name = "employeeId") Long employeeId) {
+  public void updateEmployee(
+      @RequestBody Employee employee, @PathVariable(name = "employeeId") Long employeeId) {
     Employee emp = employeeService.getEmployee(employeeId);
     if (emp != null) {
       employeeService.updateEmployee(employee);
       logger.info("Employee Updated Successfully");
     }
-
   }
-
 }

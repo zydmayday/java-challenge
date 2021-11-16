@@ -6,6 +6,9 @@ import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.exception.EmployeeAlreadyExistsException;
 import jp.co.axa.apidemo.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,8 +21,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     this.employeeRepository = employeeRepository;
   }
 
-  public List<Employee> retrieveEmployees() {
-    return employeeRepository.findAll();
+  @Override
+  public List<Employee> getEmployees(int page, int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    Page<Employee> employeePage = employeeRepository.findAll(pageable);
+    return employeePage.getContent();
   }
 
   public Employee getEmployee(Long employeeId) {
@@ -31,7 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Override
   public Employee saveEmployee(Employee employee) {
     String employeeNumber = employee.getNumber();
-    if(employeeRepository.findByNumber(employeeNumber).isPresent()) {
+    if (employeeRepository.findByNumber(employeeNumber).isPresent()) {
       throw new EmployeeAlreadyExistsException(employeeNumber);
     }
     return employeeRepository.save(employee);
