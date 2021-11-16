@@ -3,6 +3,7 @@ package jp.co.axa.apidemo.services;
 import java.util.List;
 import java.util.Optional;
 import jp.co.axa.apidemo.entities.Employee;
+import jp.co.axa.apidemo.exception.EmployeeAlreadyExistsException;
 import jp.co.axa.apidemo.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     return optEmp.get();
   }
 
-  public void saveEmployee(Employee employee) {
-    employeeRepository.save(employee);
+  @Override
+  public Employee saveEmployee(Employee employee) {
+    String employeeNumber = employee.getNumber();
+    if(employeeRepository.findByNumber(employeeNumber).isPresent()) {
+      throw new EmployeeAlreadyExistsException(employeeNumber);
+    }
+    return employeeRepository.save(employee);
   }
 
   public void deleteEmployee(Long employeeId) {

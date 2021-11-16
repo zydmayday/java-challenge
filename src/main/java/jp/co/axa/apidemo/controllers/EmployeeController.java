@@ -1,5 +1,6 @@
 package jp.co.axa.apidemo.controllers;
 
+import javax.validation.Valid;
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.services.EmployeeService;
 import org.slf4j.Logger;
@@ -33,9 +34,11 @@ public class EmployeeController {
   }
 
   @PostMapping("/employees")
-  public void saveEmployee(Employee employee) {
-    employeeService.saveEmployee(employee);
-    logger.info("Employee Saved Successfully");
+  public Employee saveEmployee(@Valid @RequestBody Employee employee) {
+    logger.info("Start Employee Saved Successfully");
+    Employee savedEmployee = employeeService.saveEmployee(employee);
+    logger.info("Finish Employee Saved Successfully");
+    return savedEmployee;
   }
 
   @DeleteMapping("/employees/{employeeId}")
