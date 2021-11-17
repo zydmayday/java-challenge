@@ -9,6 +9,7 @@ import jp.co.axa.apidemo.services.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ public class EmployeeController {
   public List<EmployeeDto> getEmployees(
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "10") int size) {
+    SecurityContextHolder.getContext().getAuthentication();
     List<Employee> employees = employeeService.getEmployees(page, size);
     return employees.stream().map(EmployeeDto::fromEmployee).collect(Collectors.toList());
   }
