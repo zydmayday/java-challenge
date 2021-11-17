@@ -8,6 +8,7 @@ import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.services.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -53,18 +55,17 @@ public class EmployeeController {
   }
 
   @DeleteMapping("/employees/{employeeId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteEmployee(@PathVariable(name = "employeeId") Long employeeId) {
     employeeService.deleteEmployee(employeeId);
     logger.info("Employee Deleted Successfully");
   }
 
   @PutMapping("/employees/{employeeId}")
-  public void updateEmployee(
+  public EmployeeDto updateEmployee(
       @RequestBody EmployeeDto employeeDto, @PathVariable(name = "employeeId") Long employeeId) {
-    Employee emp = employeeService.getEmployee(employeeId);
-    if (emp != null) {
-      employeeService.updateEmployee(employeeDto.toEmployee());
-      logger.info("Employee Updated Successfully");
-    }
+    Employee employee = employeeService.updateEmployee(employeeId, employeeDto.toEmployee());
+    logger.info("Employee Updated Successfully");
+    return EmployeeDto.fromEmployee(employee);
   }
 }

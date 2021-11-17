@@ -14,6 +14,13 @@ public interface EmployeeService {
    */
   List<Employee> getEmployees(int page, int size);
 
+  /**
+   * If employee does not exist, throw {@link
+   * jp.co.axa.apidemo.exception.EmployeeAlreadyExistsException}, otherwise return fetched employee.
+   *
+   * @param employeeId target employee id
+   * @return fetched employee data
+   */
   Employee getEmployee(Long employeeId);
 
   /**
@@ -28,7 +35,22 @@ public interface EmployeeService {
    */
   Employee saveEmployee(Employee employee);
 
+  /**
+   * If employee does not exist, throw {@link
+   * jp.co.axa.apidemo.exception.EmployeeAlreadyExistsException}, otherwise delete that employee.
+   *
+   * @param employeeId target employee id to be deleted
+   */
   void deleteEmployee(Long employeeId);
 
-  void updateEmployee(Employee employee);
+  /**
+   * If employee does not exist, throw {@link
+   * jp.co.axa.apidemo.exception.EmployeeAlreadyExistsException}, otherwise update that employee
+   * with given new employee data.
+   *
+   * @param employeeId employee id to be updated
+   * @param employee new employee data
+   * @return updated employee
+   */
+  Employee updateEmployee(Long employeeId, Employee employee);
 }
