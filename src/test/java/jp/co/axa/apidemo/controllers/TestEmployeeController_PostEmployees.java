@@ -25,8 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestMethodOrder(OrderAnnotation.class)
 @DisplayName("Test POST /api/v1/employees")
 @SpringBootTest
-@AutoConfigureMockMvc
-public class EmployeeControllerTest_PostEmployees {
+@AutoConfigureMockMvc(addFilters = false)
+public class TestEmployeeController_PostEmployees {
 
   private final ObjectMapper objectMapper = new ObjectMapper();
   @Autowired private MockMvc mockMvc;

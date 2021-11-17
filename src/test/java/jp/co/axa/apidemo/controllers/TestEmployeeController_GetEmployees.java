@@ -18,8 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles(value = "test")
 @DisplayName("Test GET /api/v1/employees")
 @SpringBootTest
-@AutoConfigureMockMvc
-public class EmployeeControllerTest_GetEmployees {
+@AutoConfigureMockMvc(addFilters = false)
+public class TestEmployeeController_GetEmployees {
 
   @Autowired @RegisterExtension H2EmployeeDataSetupExtension h2EmployeeExtension;
 

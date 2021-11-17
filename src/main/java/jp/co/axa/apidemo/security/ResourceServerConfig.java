@@ -1,10 +1,12 @@
 package jp.co.axa.apidemo.security;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+@Profile("dev")
 @EnableWebSecurity
 public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 
@@ -17,7 +19,9 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
    */
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.authorizeRequests()
+    http.csrf()
+        .disable()
+        .authorizeRequests()
         .antMatchers(HttpMethod.GET, "/api/v1/employees/**")
         .hasAnyAuthority("SCOPE_USER", "SCOPE_ADMIN")
         .antMatchers(HttpMethod.POST, "/api/v1/employees/**")

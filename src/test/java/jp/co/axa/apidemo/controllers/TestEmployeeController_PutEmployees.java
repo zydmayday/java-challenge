@@ -22,8 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles(value = "test")
 @DisplayName("Test PUT /api/v1/employees/{employeeId}")
 @SpringBootTest
-@AutoConfigureMockMvc
-public class EmployeeControllerTest_PutEmployees {
+@AutoConfigureMockMvc(addFilters = false)
+public class TestEmployeeController_PutEmployees {
 
   @Autowired @RegisterExtension H2EmployeeDataSetupExtension h2EmployeeExtension;
 
