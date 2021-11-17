@@ -1,12 +1,13 @@
 package jp.co.axa.apidemo.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
+import jp.co.axa.apidemo.dto.EmployeeDto;
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.services.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,30 +24,32 @@ public class EmployeeController {
 
   Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
-  @Autowired private EmployeeService employeeService;
+  private EmployeeService employeeService;
 
-  public void setEmployeeService(EmployeeService employeeService) {
+  public EmployeeController(EmployeeService employeeService) {
     this.employeeService = employeeService;
   }
 
   @GetMapping("/employees")
-  public List<Employee> getEmployees(
+  public List<EmployeeDto> getEmployees(
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "10") int size) {
-    return employeeService.getEmployees(page, size);
+    List<Employee> employees = employeeService.getEmployees(page, size);
+    return employees.stream().map(EmployeeDto::fromEmployee).collect(Collectors.toList());
   }
 
   @GetMapping("/employees/{employeeId}")
-  public Employee getEmployee(@PathVariable(name = "employeeId") Long employeeId) {
-    return employeeService.getEmployee(employeeId);
+  public EmployeeDto getEmployee(@PathVariable(name = "employeeId") Long employeeId) {
+    Employee employee = employeeService.getEmployee(employeeId);
+    return EmployeeDto.fromEmployee(employee);
   }
 
   @PostMapping("/employees")
-  public Employee saveEmployee(@Valid @RequestBody Employee employee) {
+  public EmployeeDto saveEmployee(@Valid @RequestBody EmployeeDto employeeDto) {
     logger.info("Start Employee Saved Successfully");
-    Employee savedEmployee = employeeService.saveEmployee(employee);
+    Employee savedEmployee = employeeService.saveEmployee(employeeDto.toEmployee());
     logger.info("Finish Employee Saved Successfully");
-    return savedEmployee;
+    return EmployeeDto.fromEmployee(savedEmployee);
   }
 
   @DeleteMapping("/employees/{employeeId}")
@@ -57,10 +60,10 @@ public class EmployeeController {
 
   @PutMapping("/employees/{employeeId}")
   public void updateEmployee(
-      @RequestBody Employee employee, @PathVariable(name = "employeeId") Long employeeId) {
+      @RequestBody EmployeeDto employeeDto, @PathVariable(name = "employeeId") Long employeeId) {
     Employee emp = employeeService.getEmployee(employeeId);
     if (emp != null) {
-      employeeService.updateEmployee(employee);
+      employeeService.updateEmployee(employeeDto.toEmployee());
       logger.info("Employee Updated Successfully");
     }
   }
