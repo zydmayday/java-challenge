@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jp.co.axa.apidemo.dto.EmployeeDto;
 import jp.co.axa.apidemo.entities.Employee;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -32,8 +33,8 @@ public class EmployeeControllerTest_PostEmployees {
   @Order(100)
   @Test
   public void testPostEmployees_normalRequestBody() throws Exception {
-    Employee employee =
-        Employee.builder()
+    EmployeeDto employeeDto =
+        EmployeeDto.builder()
             .name("name")
             .number("number")
             .department("department")
@@ -42,7 +43,7 @@ public class EmployeeControllerTest_PostEmployees {
     mockMvc
         .perform(
             post("/api/v1/employees")
-                .content(objectMapper.writeValueAsString(employee))
+                .content(objectMapper.writeValueAsString(employeeDto))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name", is("name")));
@@ -52,7 +53,7 @@ public class EmployeeControllerTest_PostEmployees {
   @Order(200)
   @Test
   public void testPostEmployees_saveWithSameEmployee() throws Exception {
-    Employee employee =
+    Employee employeeDto =
         Employee.builder()
             .name("name")
             .number("number")
@@ -62,7 +63,7 @@ public class EmployeeControllerTest_PostEmployees {
     mockMvc
         .perform(
             post("/api/v1/employees")
-                .content(objectMapper.writeValueAsString(employee))
+                .content(objectMapper.writeValueAsString(employeeDto))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest())
         .andDo(print())
@@ -73,12 +74,12 @@ public class EmployeeControllerTest_PostEmployees {
   @Order(300)
   @Test
   public void testPostEmployees_saveEmpoyee_withoutName() throws Exception {
-    Employee employee =
-        Employee.builder().number("number").department("department").salary(100).build();
+    EmployeeDto employeeDto =
+        EmployeeDto.builder().number("number").department("department").salary(100).build();
     mockMvc
         .perform(
             post("/api/v1/employees")
-                .content(objectMapper.writeValueAsString(employee))
+                .content(objectMapper.writeValueAsString(employeeDto))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest())
         .andDo(print())
