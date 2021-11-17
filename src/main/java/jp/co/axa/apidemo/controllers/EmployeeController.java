@@ -47,6 +47,7 @@ public class EmployeeController {
   }
 
   @PostMapping("/employees")
+  @ResponseStatus(HttpStatus.CREATED)
   public EmployeeDto saveEmployee(@Valid @RequestBody EmployeeDto employeeDto) {
     logger.info("Start Employee Saved Successfully");
     Employee savedEmployee = employeeService.saveEmployee(employeeDto.toEmployee());

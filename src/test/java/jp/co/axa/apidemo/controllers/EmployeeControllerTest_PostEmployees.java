@@ -45,7 +45,7 @@ public class EmployeeControllerTest_PostEmployees {
             post("/api/v1/employees")
                 .content(objectMapper.writeValueAsString(employeeDto))
                 .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(jsonPath("$.name", is("name")));
   }
 
