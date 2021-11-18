@@ -5,8 +5,12 @@ import java.util.Optional;
 import jp.co.axa.apidemo.entities.Employee;
 import jp.co.axa.apidemo.exception.EmployeeAlreadyExistsException;
 import jp.co.axa.apidemo.exception.EmployeeNotFoundException;
+import jp.co.axa.apidemo.redis.RedisConfig;
 import jp.co.axa.apidemo.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +27,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     this.employeeRepository = employeeRepository;
   }
 
+  // TODO: cache List also
   @Override
   public List<Employee> getEmployees(int page, int size) {
     Pageable pageable = PageRequest.of(page, size);
@@ -30,6 +35,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     return employeePage.getContent();
   }
 
+  @Cacheable(value = RedisConfig.REDIS_KEY_EMPLOYEE, key = "'employeeId: '+#employeeId")
   public Employee getEmployee(Long employeeId) {
     Optional<Employee> optEmp = employeeRepository.findById(employeeId);
     return optEmp.orElseThrow(() -> new EmployeeNotFoundException(employeeId));
@@ -45,6 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     return employeeRepository.save(employee);
   }
 
+  @CacheEvict(value = RedisConfig.REDIS_KEY_EMPLOYEE, key = "'employeeId: '+#employeeId")
   @Transactional
   @Override
   public void deleteEmployee(Long employeeId) {
@@ -55,6 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
   }
 
+  @CachePut(value = RedisConfig.REDIS_KEY_EMPLOYEE, key = "'employeeId: '+#employeeId")
   @Transactional
   @Override
   public Employee updateEmployee(Long employeeId, Employee employee) {
